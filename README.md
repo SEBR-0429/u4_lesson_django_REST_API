@@ -573,7 +573,7 @@ class SongSerializer(serializers.HyperlinkedModelSerializer):
         
  
  class ArtistSerializer(serializers.HyperlinkedModelSerializer):
-     song = SongSerializer(
+     songs = SongSerializer(
         many = True,
         read_only = True
     )
@@ -602,24 +602,29 @@ Now, when we load up our Artists, we'll be able to see all of our attached sons 
 We need to configure CORS in order for other applications to use the API we just
 created.
 
-in the INSTALLED_APPS part of our Settings.py, lets put in
-```
-'corsheaders'
-```
-
-and lets run a command to install the necessary dependencies
+Lets run a command to install the necessary dependencies
 
 ```
 pip install django-cors-headers
 ```
 
+and in the INSTALLED_APPS part of our Settings.py, lets put in
+
+
+```
+'corsheaders'
+```
+
 
 In our MIDDLEWARE section, lets add these two lines toward the top of the block, so that they can be run before we go through the other parts of the Django framework:
+
+CorsMiddleware should be placed as high as possible, especially before any middleware that can generate responses such as Django's CommonMiddleware or Whitenoise's WhiteNoiseMiddleware. If it is not before, it will not be able to add the CORS headers to these responses.
 
 ```
 MIDDLEWARE = [
     ...,
     "corsheaders.middleware.CorsMiddleware",
+....
     "django.middleware.common.CommonMiddleware",
     ...,
 ]
